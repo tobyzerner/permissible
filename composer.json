@@ -1,0 +1,23 @@
+{
+    "name": "tobscure/permissible",
+    "description": "Powerful, flexible, relational permissions using Eloquent.",
+    "authors": [
+        {
+            "name": "Toby Zerner",
+            "email": "toby.zerner@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0",
+        "illuminate/database": "4.2.*"
+    },
+    "require-dev": {
+        "squizlabs/php_codesniffer": "1.5.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "Tobscure\\Permissible\\": "src/"
+        }
+    },
+    "minimum-stability": "stable"
+}
