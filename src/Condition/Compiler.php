@@ -154,7 +154,12 @@ class Compiler
         $conditions = $model->getPermissionWheres($this->user, $where['permission']);
 
         if (! $relation) {
-            return $query->addNestedWhereQuery($conditions, $where['boolean']);
+            // @todo When there are no where clauses in $conditions, then this shouldn't alter the query
+            return $query->whereIn('id', function ($sub) use ($conditions, $model) {
+                $sub->select('id')
+                    ->from($model->getTable())
+                    ->addNestedWhereQuery($conditions);
+            }, $where['boolean']);
 
         } else {
             $relation = $this->model->$relation();
@@ -164,7 +169,7 @@ class Compiler
                 $sub->select('id')
                     ->from($relation->getModel()->getTable())
                     ->addNestedWhereQuery($conditions);
-            });
+            }, $where['boolean']);
         }
     }
 
@@ -180,6 +185,7 @@ class Compiler
 
         $conditions = $model->getPermissionWheres($this->user, $where['permission']);
 
+        // @todo this is probably broken, see whereCan for working
         if (! $relation) {
             return $query->whereRaw('! ('.$conditions->toSql().')', $conditions->getBindings(), $where['boolean']);
 
