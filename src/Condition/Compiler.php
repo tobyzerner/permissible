@@ -40,7 +40,7 @@ class Compiler
     {
         $parts = explode('.', $column);
         $field = array_pop($parts);
-        
+
         if ($parts) {
 
             $model = $this->model;
@@ -146,15 +146,17 @@ class Compiler
         $relation = $where['relation'];
 
         $model = $this->model;
-        
+
         if ($relation) {
             $model = $model->$relation()->getModel();
         }
 
         $conditions = $model->getPermissionWheres($this->user, $where['permission']);
+        if (!$conditions->wheres) {
+            return $query;
+        }
 
         if (! $relation) {
-            // @todo When there are no where clauses in $conditions, then this shouldn't alter the query
             return $query->whereIn('id', function ($sub) use ($conditions, $model) {
                 $sub->select('id')
                     ->from($model->getTable())
@@ -178,7 +180,7 @@ class Compiler
         $relation = $where['relation'];
 
         $model = $this->model;
-        
+
         if ($relation) {
             $model = $model->$relation;
         }
