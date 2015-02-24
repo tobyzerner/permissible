@@ -4,17 +4,17 @@ trait Permissible
 {
     protected static $callbacks = [
         'grant' => [],
-        'check' => []
+        'demand' => []
     ];
 
-    public static function grant($permission, $callback = null)
+    public static function grantPermission($permission, $callback = null)
     {
         return static::addCallback('grant', $permission, $callback);
     }
 
-    public static function check($permission, $callback = null)
+    public static function demandPermission($permission, $callback = null)
     {
-        return static::addCallback('check', $permission, $callback);
+        return static::addCallback('demand', $permission, $callback);
     }
 
     protected static function addCallback($type, $permission, $callback = null)
@@ -69,14 +69,14 @@ trait Permissible
             $conditions->addNestedWhereQuery($grant);
         }
 
-        $check = $this->constructConditions($this->getCallbacks('check', $permission), $user, $permission, 'and');
-        if ($check === false) {
+        $demand = $this->constructConditions($this->getCallbacks('demand', $permission), $user, $permission, 'and');
+        if ($demand === false) {
             return false;
-        } elseif ($check !== true) {
-            $conditions->addNestedWhereQuery($check);
+        } elseif ($demand !== true) {
+            $conditions->addNestedWhereQuery($demand);
         }
 
-        if ($grant === true and $check === true) {
+        if ($grant === true and $demand === true) {
             return true;
         }
 
@@ -86,7 +86,7 @@ trait Permissible
     protected function constructConditions($callbacks, $user, $permission, $boolean)
     {
         if (! $callbacks) {
-            return $boolean == 'and';
+            return $boolean === 'and';
         }
 
         $conditions = new Condition\Builder;
@@ -97,7 +97,7 @@ trait Permissible
 
             // If boolean == or, then only one callback must be true for the conditions to be satisfied.
             // If boolean == and, then only one callback must be false for the conditions to not be satisfied.
-            if ($result === ($boolean == 'or')) {
+            if ($result === ($boolean === 'or')) {
                 return $result;
             }
 
