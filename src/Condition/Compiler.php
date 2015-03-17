@@ -19,7 +19,7 @@ class Compiler
         if ($conditions === false) {
             return $query->whereRaw('FALSE');
         } elseif ($conditions === true || ! count($conditions->wheres)) {
-            return $query;
+            return $query->whereRaw('TRUE');
         }
 
         foreach ($conditions->wheres as $k => &$where) {
