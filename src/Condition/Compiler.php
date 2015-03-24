@@ -33,7 +33,7 @@ class Compiler
 
     protected function whereNested($query, $where)
     {
-        return $query->addNestedWhereQuery($this->compile($where['query']));
+        return $query->addNestedWhereQuery($this->compile($where['query']), $where['boolean']);
     }
 
     protected function expandColumn($column)
@@ -152,8 +152,10 @@ class Compiler
         }
 
         $conditions = $model->getPermissionWheres($this->user, $where['permission']);
-        if (!$conditions->wheres || (count($conditions->wheres) === 1 && $conditions->wheres[0]['type'] === 'raw' && $conditions->wheres[0]['sql'] === 'TRUE')) {
+        if (!$conditions->wheres) {
             return $query;
+        } elseif ((count($conditions->wheres) === 1 && $conditions->wheres[0]['type'] === 'raw' && $conditions->wheres[0]['sql'] === 'TRUE')) {
+            return $query->whereRaw('TRUE', [], $where['boolean']);
         }
 
         if (! $relation) {
