@@ -152,7 +152,7 @@ class Compiler
         }
 
         $conditions = $model->getPermissionWheres($this->user, $where['permission']);
-        if (!$conditions->wheres) {
+        if (!$conditions->wheres || (count($conditions->wheres) === 1 && $conditions->wheres[0]['type'] === 'raw' && $conditions->wheres[0]['sql'] === 'TRUE')) {
             return $query;
         }
 
