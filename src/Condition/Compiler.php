@@ -14,7 +14,7 @@ class Compiler
 
     public function compile($conditions)
     {
-        $query = $this->model->newQuery()->getQuery();
+        $query = $this->model->newQueryWithoutScopes()->getQuery();
 
         if ($conditions === false) {
             return $query->whereRaw('FALSE');
